@@ -5,9 +5,10 @@ import {
   PutCommand,
   ScanCommand,
   GetCommand,
+  DeleteCommand
 } from "@aws-sdk/lib-dynamodb";
 
-import { createItem, listAllItems, getItem } from "./dynamo";
+import { createItem, listAllItems, getItem, deleteItem } from "./dynamo";
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
 
@@ -51,5 +52,13 @@ describe("CRUD (unit, mocked) with Vitest", () => {
     expect(output).toEqual(mockItem);
   });
 
+  it ("deleteItem returns deleted item", async () => {
+    const mockItem = {id: "1", name: "Fake Item"};
+    ddbMock.on(DeleteCommand).resolves({Attributes: mockItem});
+
+    const output = await deleteItem("Table", { id: "1"});
+
+    expect(output).toEqual(mockItem);
+  })
 
 });
